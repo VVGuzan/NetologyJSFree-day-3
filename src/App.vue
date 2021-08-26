@@ -1,19 +1,23 @@
 <template>
     <div id="app">
 
-        <app-header/>
+        <app-header :changeSearch="changeSearch" />
 
         <div class="container">
-            <h1 class="pt-3 pb-3">Персонажи Marvel</h1>
+            <h1 class="pt-3 pb-3">Персонажи Marvel (2021-08-26)</h1>
 
-            <app-modal :character="characters[characterIndex]" />
+            <app-modal :character="searchCharacters[characterIndex]" />
 
             <spinner v-if="loading"/>
 
 
             <div class="row">
 
-              <div v-for="(el, idx) in characters" class="card mb-3 col-sm-12 col-md-6 col-lg-4">
+              <h5 v-if="!searchCharacters.length && !loading">Ничего не найдено по запросу: {{search}}</h5>
+
+              <div v-for="(el, idx) in searchCharacters"
+                    :key="el.id"
+                    class="card mb-3 col-sm-12 col-md-6 col-lg-4">
                 <div class="row g-0">
                     <div class="col-4">
                         <img :src=el.thumbnail
@@ -59,6 +63,7 @@
                 loading: false,
                 characters: [],
                 characterIndex: 0,
+                search: '',
             }
         },
         methods: {
@@ -67,9 +72,17 @@
                     .then(res => res.json())
                     .then(json => this.characters = json)
           },
+          changeSearch: function (value){
+            this.search = value
+          },
         },
         computed: {
-
+          searchCharacters: function(){
+            const {search, characters} = this
+            return characters.filter((character) => {
+              return character.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+            })
+          },
         },
         async mounted(){
           this.loading = true

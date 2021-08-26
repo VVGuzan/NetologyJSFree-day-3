@@ -28,7 +28,8 @@
                       </p>
                       <h5>Комиксы:</h5>
                       <ul>
-                          <li v-for="el in character.comics">{{ el.name }}</li>
+                          <li v-for="el in character.comics"
+                              :key="el.id">{{ el.name }}</li>
                       </ul>
                   </div>
 
